@@ -77,7 +77,7 @@ export default class tranfromBar {
     let yAxisUnit = data.yAxisUnit,
       yAxis = [],
       BarYAxis = new chartBarYAxis(yAxisUnit),
-      barYAxis = BarYAxis.barYAxis;
+      barYAxis = BarYAxis.barYAxis();
     yAxis.push(barYAxis);
     return yAxis;
   }

@@ -17,15 +17,17 @@ export class chartBarXAxis {
  * @class chartBarYAxis
  */
 export class chartBarYAxis {
-  constructor(yAxisUnit) {
+  constructor(yAxisUnit='') {
     this.yAxisUnit = yAxisUnit;
   }
   type = 'value';
   yAxisUnit = '';
-  barYAxis = {
-    type: this.type,
-    axisLabel: {
-      formatter: '{value}' + this.yAxisUnit
+  barYAxis = () => {
+    return {
+      type: this.type,
+      axisLabel: {
+        formatter: '{value}' + this.yAxisUnit
+      }
     }
   }
 }

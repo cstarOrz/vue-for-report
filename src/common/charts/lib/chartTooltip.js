@@ -27,6 +27,8 @@ class chartFormatter {
   defaultFormatter = '';
   pieFormatter = '{a} <br/>{b} : {c} ({d}%)';
   pieFormatter1 = '{b} : {c} ({d}%)';
+  barFormatter = '{a} <br/>{b} : {c}';
+  barFormatter1 = '{a} <br/>{b} : {c}%';
   init(data, type) {
     if (!data.formatter) {
       if (type == 'pie') {
@@ -35,11 +37,20 @@ class chartFormatter {
         } else {
           this.formatter = this.pieFormatter1;
         }
+      } else if (type == 'bar' && data.yAxisUnit) {
+        this.formatter = function (params) {
+          let res = params[0].axisValue;
+          params.forEach((item,index)=>{
+            res += '<br/>' + item.marker + item.seriesName + '：' + item.value + '%';
+          });
+
+          return res;
+        };
       } else {
         this.formatter = this.defaultFormatter;
       }
     } else if (data.formatter) {
-      // this.formatter = this.defaultFormatter;
+      // this.formatter = this.defaultFormatter;marker
       if (type == 'radar') {
         this.formatter = function (params) {
           let values = params.value,

@@ -45,7 +45,7 @@ export default {
     color: #666;
     border-collapse: collapse;
     .report-table-head {
-      background: #6f6dd8;
+      background: #299be4;
       td {
         color: #fff;
       }
@@ -59,11 +59,11 @@ export default {
       }
     }
     .title {
-      background: #6f6dd8;
+      background: #299be4;
       color: #fff;
     }
     .report-table-head {
-      background: #6f6dd8;
+      background: #299be4;
     }
   }
 }

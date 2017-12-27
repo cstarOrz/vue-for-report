@@ -1,7 +1,7 @@
 <template>
   <div class="report-main">
     <div class="svg" v-if="listData.elementType=='LevelSvg'">
-      <p class="title">{{listData.jsonElement.name}}</p>
+      <!-- <p class="svg-title">{{listData.jsonElement.name}}</p> -->
       <svg :width="svgWidth" :height="computeSvgHeight" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
         <rects-text :x="rootX" :y="rootY" :text="listData.jsonElement.levelParent" :is-root='true'></rects-text>
         <template v-for="(item,index) of listData.jsonElement.levelChildren">
@@ -9,12 +9,18 @@
         </template>
       </svg>
     </div>
-    <!-- <div class="mergeTable">
-        <merge-table></merge-table>
+    <div class="merge-table" v-if="listData.elementType=='MergeTable'">
+        <p class="tit" v-if="listData.jsonElement.showName">
+            {{listData.jsonElement.name}}
+          </p>
+        <merge-table :tableHead="listData.jsonElement.head" :tableConData="listData.jsonElement.data"></merge-table>
     </div>
-    <div class="special-table">
-        <special-table></special-table>
-    </div> -->
+    <div class="special-table" v-if="listData.elementType=='SpanTable'">
+        <p class="tit" v-if="listData.jsonElement.showName">
+            {{listData.jsonElement.name}}
+        </p>
+        <special-table :tableConData="listData.jsonElement.cells"></special-table>
+    </div>
     <div class="text" v-if="listData.elementType=='MultiText'">
         <p v-for="(par,index) in listData.jsonElement.paragraphs" :key="index" v-bind:class="{ indent: par.isIndented}">
         {{par.content}}
@@ -129,13 +135,13 @@ export default {
       text-indent: 28px;
     }
   }
-  .table {
+  .table,.merge-table,.special-table{
     padding: 10px 0;
-    .tit {
-      font-weight: bold;
-      font-size: 16px;
-      text-align: center;
-      margin: 10px 0 15px 0;
+    .tit{
+        font-weight: bold;
+        font-size: 16px;
+        text-align: center;
+        margin: 10px 0 15px 0;
     }
   }
   .top-table {
@@ -152,7 +158,7 @@ export default {
   }
   .svg {
     text-align: center;
-    .title {
+    .svg-title {
       margin: 5px 0 10px;
       font-size: 18px;
       color: #333;

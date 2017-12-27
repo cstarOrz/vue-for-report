@@ -7,8 +7,8 @@ export default {
 };
 
 export const chartType = {
-  PIE: 'pie',
-  BAR: 'bar',
-  RADAR: 'radar',
-  STACK: 'stack'
+  PIE: 'piechart',
+  BAR: 'barchart',
+  RADAR: 'radarchart',
+  STACK: 'stackchart'
 };

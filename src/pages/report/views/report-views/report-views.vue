@@ -1,35 +1,51 @@
 <template>
-  <div>
-    <div class="report-views"  v-if="!reportError">
-      <h3 class="report-title">{{reportTitle}}</h3>
-      <h5 class="report-user">{{reportUser}}</h5>
-      <div class="report-list" v-for="list in reportData" :key='list.id'>
-        <h4 class="report-list-title">
-          <div class="report-list-title-line">
-            <label>
-              <span>{{list.name}}</span>
-            </label>
-          </div>
-        </h4>
-        <report-list v-for="elements in list.reportElements" :key="elements.elementCode" :listData = "elements"></report-list>
-        <div v-for="sections in list.sections" :key='sections.id' class="report-list-second">
-          <h5 class="report-list-title-second">
-            <span>{{sections.name}}</span>
-          </h5>
-          <report-list v-for="elements in sections.reportElements" :key="elements.elementCode" :listData = "elements"></report-list>
-          <div v-for="subSections in sections.subSections" :key="subSections.id" class="report-list-third">
-            <h6 class="report-list-title-third">
-              <span>{{subSections.name}}</span>
-            </h6>
-            <report-list v-for="elements in subSections.reportElements" :key="elements.elementCode" :listData = "elements"></report-list>
-          </div>
+  <div class="manage-report">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="###">查看报告</a></li>
+    </ul>
+    <div class="report-search">
+      <ul class="ul-form">
+          <li class="form-group">
+              <label class="control-label">报告类型：</label>
+              <select v-model="typeListChoice" class=" input-medium" style="width:163px;">
+                <option v-for="(item,index) in typeList" :key="index" :value="item.id">{{item.name}}</option>
+              </select>
+          </li>
+          <li class="form-group">
+              <button class="get-report" @click="getReport">查询</button>
+          </li>
+      </ul>
+    </div>
+        <div class="report-main" v-show="showContent">
+            <div class="report-title" ref="title">
+                <h3 class="rep-title">{{reportTitle}}</h3>
+                <h5 class="rep-user">{{reportUser}}</h5>
+            </div>
+            <div class="report-content clearfix" :style="{height: conHeight + 'px' }" style="padding:20px;">
+                <div class="report-con-left">
+                    <ul>
+                        <menu-tree v-for="item in meunList" :key='item.id' :list='item' :getTmplContent='getGroupReportSectionData'></menu-tree>
+                    </ul>
+                </div>
+                <div class="report-con-right">
+                    <!-- <Row v-if="tmplLoad">
+                        <Col class="spin-col" span="24">
+                            <Spin fix>
+                            <Icon type="load-c" size=36 class="spin-icon-load"></Icon>
+                            <div>Loading</div>
+                            </Spin>
+                        </Col>
+                    </Row> -->
+                    <div v-if="tmplLoad" class="loading">
+                      加载中
+                    </div>
+                    <div v-else>
+                        <report-list v-for="elements in reportData" :key="elements.elementCode" :listData = "elements"></report-list>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    <div v-if="reportError" class="report-error">
-      {{reportErrorMes}}
-    </div>
-  </div>
 </template>
 
 <script src="./js/report-views.js"></script>

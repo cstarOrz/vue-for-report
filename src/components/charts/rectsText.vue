@@ -4,8 +4,8 @@
         <rect :height="this.rectHeight" :width="this.rectWidth" :y="y" :x="x" stroke-width="0" ry="10" :fill="thisCheck" />
         <text text-anchor="middle" font-family="serif" :font-size="fontSize" :y="y + fontSize + rectHeight/4" :x="x + rectWidth/2" stroke-width="0" fill="#fff" xml:space="preserve">{{text}}</text>
         <template v-if="!isRoot">
-            <line fill="none" stroke="#b6a2de" stroke-width="2" :x1="rootX+rectWidth+4" :y1="rootY+rectHeight/2" :x2="x-4" :y2="y+rectHeight/2" />
-            <circle :cx="x-4" :cy="y+this.rectHeight/2" r="3" stroke-width="0" fill="#b6a2de"/>
+            <line fill="none" stroke="#55b5f4" stroke-width="2" :x1="rootX+rectWidth+4" :y1="rootY+rectHeight/2" :x2="x-4" :y2="y+rectHeight/2" />
+            <circle :cx="x-4" :cy="y+this.rectHeight/2" r="3" stroke-width="0" fill="#55b5f4"/>
         </template>
     </g>
 </template>
@@ -39,8 +39,8 @@ export default {
   },
   computed: {
     thisCheck: function() {
-      if (this.check) return "#6f6dd8";
-      else return "#b6a2de";
+      if (this.check) return "#258ccf";
+      else return "#55b5f4";
     }
   }
 };

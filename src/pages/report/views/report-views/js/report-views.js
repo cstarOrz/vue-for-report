@@ -1,79 +1,142 @@
+import Vue from 'vue';
 import tranfrom from '@/common/charts/common';
 import reportList from '@/components/charts/reportList';
-import {reportDetail} from '@/common/httpServers';
+import menuTree from '@/components/charts/menuTree';
+import {reportDetail,reportDetails} from '@/common/httpServers';
 
 export default {
   name: 'report-views',
   components: {
-    'report-list': reportList
+    'report-list': reportList,
+    'menu-tree':menuTree
   },
   data() {
     return {
-      reportData: [],
+      // reportData: [],
+      // reportTitle: '',
+      // reportUser: '',
+      // reportError: false,
+      // reportErrorMes: ''
+      // reportId: this.$route.query.reportId,
+      tmplLoad:false,
       reportTitle: '',
       reportUser: '',
-      reportError: false,
-      reportErrorMes: ''
+      meunList: [],
+      reportData:{},
+      conHeight:0,
+      typeList:window.typeList,
+      groupReserveId:window.groupReserveId,
+      typeListChoice:'',
+      showContent:false
     };
   },
   methods: {
-    getReportDetail() {
-      reportDetail().then((res) => {
+    getReport(){
+      //alert(this.typeListChoice);
+      this.getReportDetail(this.typeListChoice,this.groupReserveId);
+    },
+    getReportDetail(id,groupReserveId) {
+      reportDetail(id,groupReserveId).then((res) => {
         if (res.status == 200 && res.data && res.data.code == 200) {
-          this.reportError = false;
-          this.reportTitle = res.data.data.reportName;
-          this.reportUser = res.data.data.reportSubName;
-          this.reportData = this.processData(res.data.data.reportChapterList);
-        } else {
-          this.reportErrorMes = res.data.message;
-          this.reportError = true;
+          this.init();
+          this.showContent = true;
+          //console.log(res.data.data.data);
+          let resData = res.data.data;
+          this.reportTitle = resData.reportName;
+          this.reportUser = resData.reportSubName;
+          this.meunList = resData.reportChapterList;
+          this.resetMenuList(this.meunList);
+          this.getGroupReportSectionData(this.meunList[0]);
+          this.meunList[0].isLoad = true;
+          this.meunList[0].active = true;
         }
       }, (error) => {
         console.log('error', error);
       });
     },
-    processData(data) {
-      data.forEach((dataList) => {
-        if (dataList.sections) {
-          dataList.sections.forEach((secList) => {
-            if (secList.reportElements) {
-              secList.reportElements.forEach((secEle) => {
-                this.jsonParse(secEle);
-              });
-            }
-            if (secList.subSections) {
-              secList.subSections.forEach((tirList) => {
-                tirList.reportElements.forEach((tirEle) => {
-                  this.jsonParse(tirEle);
-                });
-              });
-            }
-          });
+    resetMenuList(meunList) {
+      meunList.forEach((item) => {
+        Vue.set(item, 'isLoad', false);
+        Vue.set(item, 'active', false);
+        item.templateBlock = item.hasDirectContent;
+        if(item.sections&&item.sections.length>0){
+          item.subSections = item.sections;
         }
-        if (dataList.reportElements) {
-          dataList.reportElements.forEach((firEle) => {
-            this.jsonParse(firEle);
-          });
+        if (item.subSections&&item.subSections.length>0) {
+            this.resetMenuList(item.subSections);
         }
       });
-      return data;
     },
-    jsonParse(dataEle) {
-      dataEle.jsonElement = JSON.parse(dataEle.jsonData);
-      if (dataEle.elementType == 'Graph') {
-        this.processGraph(dataEle, dataEle.jsonElement);
+    getGroupReportSectionData(item) {
+      if (this.tmplLoad) {
+          return;
       }
+      if (item.active) {
+          return;
+      }
+      this.tmplLoad = true;
+      this.resetMenuList(this.meunList);
+      Vue.set(item, 'isLoad', true);
+      Vue.set(item, 'active', true);
+      //console.log('item', item)
+      reportDetails(this.typeListChoice,this.groupReserveId,item.id).then((res) => {
+        if (res.status == 200 && res.data && res.data.code == 200) {
+          this.tmplLoad = false;
+          this.reportData = res.data.data;
+          //console.log(res.data.data);
+          this.reportData.forEach((column,index)=>{
+            column.jsonElement = JSON.parse(column.jsonData);
+            if (column.elementType == 'Graph') {
+              this.processGraph(column, column.jsonElement);
+            }
+          })
+        }
+      }, (error) => {
+        console.log('error', error);
+      });
+      // this.$http.get(Url.getGroupReportSectionData, {
+      //   params: {
+      //     testeeId: this.reportId,
+      //     sectionId: item.id
+      //   }
+      // }).then(res => {
+      //   if (res.data.code == 200) {
+      //     this.tmplLoad = false;
+      //     this.reportData = res.data.data;
+
+      //     this.reportData.forEach((column,index)=>{
+      //       column.jsonElement = JSON.parse(column.jsonData);
+      //       if (column.elementType == 'Graph') {
+      //         this.processGraph(column, column.jsonElement);
+      //       }
+      //     })
+
+      //   } else {
+      //     this.$Message.error(res.data.message);
+      //   }
+      //});
     },
     processGraph(obj, chartData) {
       let list = new tranfrom(chartData);
       if (list.response.code == 200) {
         obj.chartsOption = list.response.data;
       } else {
-        console.log(list.response.message);
+      console.log(list.response.message)
       }
+    },
+    init(){
+      let boxHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      let titleH = this.$refs.title.offsetHeight+52;
+      this.conHeight = boxHeight>800?boxHeight-165-titleH:800-165-titleH;
     }
   },
   mounted() {
-    this.getReportDetail();
+    // this.$nextTick(() => {
+    //   let boxHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    //   let titleH = this.$refs.title.offsetHeight+52;
+    //   this.conHeight = boxHeight>800?boxHeight-80-titleH:800-80-titleH;
+    // })
+    //this.getReportDetail();
+    this.typeListChoice = this.typeList[0].id;
   }
 };
