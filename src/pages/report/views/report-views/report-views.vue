@@ -7,7 +7,7 @@
       <ul class="ul-form">
           <li class="form-group">
               <label class="control-label">报告类型：</label>
-              <select v-model="typeListChoice" class=" input-medium" style="width:163px;">
+              <select class=" input-medium" style="width:163px;" ref="typeChoice">
                 <option v-for="(item,index) in typeList" :key="index" :value="item.id">{{item.name}}</option>
               </select>
           </li>

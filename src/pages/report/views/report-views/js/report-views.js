@@ -25,15 +25,30 @@ export default {
       reportData:{},
       conHeight:0,
       typeList:window.typeList,
+      // typeList:[
+      //   {
+      //     id:'1',
+      //     name:'测试1'
+      //   },
+      //   {
+      //     id:'2',
+      //     name:'测试2'
+      //   }
+      // ],
       groupReserveId:window.groupReserveId,
-      typeListChoice:'',
+      //typeListChoice:'',
       showContent:false
     };
   },
   methods: {
+    // selectVal(ele){
+    //   this.typeListChoice = ele.target.value;
+    // },
     getReport(){
       //alert(this.typeListChoice);
-      this.getReportDetail(this.typeListChoice,this.groupReserveId);
+      let typeId = this.$refs.typeChoice.value;
+      //console.log('type',this.typeListChoice);
+      this.getReportDetail(typeId,this.groupReserveId);
     },
     getReportDetail(id,groupReserveId) {
       reportDetail(id,groupReserveId).then((res) => {
@@ -78,8 +93,14 @@ export default {
       this.resetMenuList(this.meunList);
       Vue.set(item, 'isLoad', true);
       Vue.set(item, 'active', true);
+      let typeId = this.$refs.typeChoice.value;
+      // setTimeout(()=>{
+      //   console.log('typee',this.$refs.typeChoice.value)
+      // },0)
+      // console.log('type',typeId);
       //console.log('item', item)
-      reportDetails(this.typeListChoice,this.groupReserveId,item.id).then((res) => {
+      //console.log('typeeeee',this.typeListChoice);
+      reportDetails(typeId,this.groupReserveId,item.id).then((res) => {
         if (res.status == 200 && res.data && res.data.code == 200) {
           this.tmplLoad = false;
           this.reportData = res.data.data;
@@ -137,6 +158,6 @@ export default {
     //   this.conHeight = boxHeight>800?boxHeight-80-titleH:800-80-titleH;
     // })
     //this.getReportDetail();
-    this.typeListChoice = this.typeList[0].id;
+    //this.typeListChoice = this.typeList[0].id;
   }
 };
